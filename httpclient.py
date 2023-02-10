@@ -22,6 +22,7 @@
 # https://www.cs.unb.ca/~bremner/teaching/cs2613/books/python3-doc/library/urllib.parse.html
 # https://docs.citrix.com/en-us/citrix-adc/current-release/appexpert/http-callout/http-request-response-notes-format.html
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+# https://www.urlencoder.io/python/
 
 import sys
 import socket
@@ -85,7 +86,7 @@ class HTTPClient(object):
         if ":" in parse_url.netloc:
             host, port = parse_url.netloc.split(":")
         else:
-            host = parse_url.netloc8
+            host = parse_url.netloc
             #check if https or http
             if parse_url.scheme == "https":
                 port = 443
@@ -111,7 +112,12 @@ class HTTPClient(object):
         request = request + "Accept-Language: en-US\r\n"
         request = request + "Accept-Encoding: gzip, deflate\r\n"
         request = request + "Connection: close\r\n\r\n"
-        self.sendall(request)
+        if args is not None:
+            Info = urllib.parse.urlencode(args)
+            request = request + Info
+            self.sendall(request)
+        else:
+            self.sendall(request)
         #get response
         data = self.recvall(self.socket)
         self.close()
